@@ -8,6 +8,7 @@ data "aws_ami" "amazonlinux2" {
     name   = "virtualization-type"
     values = ["hvm"]
   }
+  
   most_recent = true
   owners      = ["amazon"]
 }
