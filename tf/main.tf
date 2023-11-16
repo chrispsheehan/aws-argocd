@@ -1,3 +1,12 @@
+resource "tls_private_key" "this" {
+   algorithm = "ED25519"
+}
+
+resource "aws_key_pair" "this" {
+  key_name   = "terraform-ssh-key"
+  public_key = tls_private_key.this.public_key_openssh
+}
+
 resource "aws_vpc" "vpc" {
   cidr_block           = var.custom_vpc
   instance_tenancy     = var.instance_tenancy
@@ -68,21 +77,28 @@ resource "aws_security_group" "ec2-sq" {
 
 resource "aws_instance" "server" {
   ami                    = data.aws_ami.amazonlinux2.id
-  instance_type          = "t2.nano"
-  key_name               = data.aws_key_pair.work-mac.key_name
+  instance_type          = "t2.medium"
+  key_name               = aws_key_pair.this.key_name
   availability_zone      = data.aws_availability_zones.azs.names[0]
   subnet_id              = aws_subnet.subnet.id
   vpc_security_group_ids = [aws_security_group.ec2-sq.id]
 
+# curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+# install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+# install minikube-linux-amd64 /usr/local/bin/minikube
+# minikube start --force
+
   user_data = <<-EOF
 #!/bin/bash
-sudo yum update
-sudo yum install httpd -y
-sudo dnf update -y
-sudo systemctl start httpd
-sudo systemctl enable httpd
-sudo ufw allow http
-sudo ufw allow https
-sudo bash -c 'echo "<!DOCTYPE html><html><head> <title>ChrisPSheehan.com</title></head><body> <h1>ChrisPSheehan.com</h1> <p>badgers $(hostname -f)</p></body></html>" > /var/www/html/index.html'
+sudo yum update -y
+sudo yum search docker
+sudo yum info docker
+sudo yum install docker -y
+sudo usermod -a -G docker ec2-user
+id ec2-user
+newgrp docker
+sudo systemctl enable docker.service
+sudo systemctl start docker.service
 EOF
 }
