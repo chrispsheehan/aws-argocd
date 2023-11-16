@@ -16,8 +16,3 @@ data "aws_ami" "amazonlinux2" {
 data "aws_availability_zones" "azs" {
   state = "available"
 }
-
-data "aws_key_pair" "work-mac" {
-  key_name           = "work-mac"
-  include_public_key = true
-}
