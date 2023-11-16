@@ -83,11 +83,8 @@ resource "aws_instance" "server" {
   subnet_id              = aws_subnet.subnet.id
   vpc_security_group_ids = [aws_security_group.ec2-sq.id]
 
-# curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-# install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-# curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-# install minikube-linux-amd64 /usr/local/bin/minikube
-# minikube start --force
+  # cat /var/log/cloud-init-output.log
+  # X Exiting due to GUEST_MISSING_CONNTRACK: Sorry, Kubernetes 1.28.3 requires conntrack to be installed in root's path
 
   user_data = <<-EOF
 #!/bin/bash
@@ -100,5 +97,11 @@ id ec2-user
 newgrp docker
 sudo systemctl enable docker.service
 sudo systemctl start docker.service
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+sudo -i
+sudo minikube start --vm-driver=none
 EOF
 }
