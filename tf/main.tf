@@ -77,7 +77,7 @@ resource "aws_security_group" "ec2-sq" {
 
 resource "aws_instance" "server" {
   ami                    = data.aws_ami.amazonlinux2.id
-  instance_type          = "t2.medium"
+  instance_type          = var.instance_type
   key_name               = aws_key_pair.this.key_name
   availability_zone      = data.aws_availability_zones.azs.names[0]
   subnet_id              = aws_subnet.subnet.id
