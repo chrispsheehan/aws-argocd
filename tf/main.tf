@@ -75,6 +75,7 @@ resource "aws_security_group" "ec2-sq" {
   }
 }
 
+# get logs via cat /var/log/cloud-init-output.log
 resource "aws_instance" "server" {
   ami                    = data.aws_ami.amazonlinux2.id
   instance_type          = var.instance_type
