@@ -34,6 +34,18 @@ rm argocd-linux-amd64
 echo creating argocd server
 sudo su -s /bin/bash -c "kubectl create namespace argocd" ec2-user
 sudo su -s /bin/bash -c "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml" ec2-user
-sudo su -s /bin/bash -c "kubectl patch svc argocd-server -n argocd -p '{\"spec\": {\"type\": \"LoadBalancer\"}}'" ec2-user
-sudo su -s /bin/bash -c "kubectl port-forward svc/argocd-server -n argocd 8080:443" ec2-user
+sleep 120 # replace with wait for loop
 
+# expose argocd
+echo exposing argocd
+sudo su -s /bin/bash -c "kubectl patch svc argocd-server -n argocd -p '{\"spec\": {\"type\": \"LoadBalancer\"}}'" ec2-user
+sudo su -s /bin/bash -c "kubectl port-forward svc/argocd-server -n argocd 8999:443 &" ec2-user
+
+# set admin secret
+echo getting admin secret
+export ADMIN_SECRET=$(sudo su -s /bin/bash -c "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d; echo" ec2-user)
+sudo su -s /bin/bash -c "echo secret:$ADMIN_SECRET" ec2-user
+echo logging in
+sudo su -s /bin/bash -c "argocd login --insecure localhost:8999 --username admin --password $ADMIN_SECRET" ec2-user
+echo creating app
+sudo su -s /bin/bash -c "argocd app create" ec2-user
