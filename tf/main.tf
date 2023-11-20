@@ -86,15 +86,4 @@ resource "aws_instance" "server" {
   vpc_security_group_ids = [aws_security_group.ec2-sq.id]
 
   user_data = file("${path.module}/bin/startup.sh")
-#   user_data = <<-EOF
-# #!/bin/bash
-# sudo yum update
-# sudo yum install httpd -y
-# sudo dnf update -y
-# sudo systemctl start httpd
-# sudo systemctl enable httpd
-# sudo ufw allow http
-# sudo ufw allow https
-# sudo bash -c 'echo "<!DOCTYPE html><html><head> <title>ChrisPSheehan.com</title></head><body> <h1>ChrisPSheehan.com</h1> <p>badgers $(hostname -f)</p></body></html>" > /var/www/html/index.html'
-# EOF
 }
