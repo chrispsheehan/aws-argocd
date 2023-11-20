@@ -47,5 +47,7 @@ export ADMIN_SECRET=$(sudo su -s /bin/bash -c "kubectl -n argocd get secret argo
 sudo su -s /bin/bash -c "echo secret:$ADMIN_SECRET" ec2-user
 echo logging in
 sudo su -s /bin/bash -c "argocd login --insecure localhost:8999 --username admin --password $ADMIN_SECRET" ec2-user
+
+# create app
 echo creating app
-sudo su -s /bin/bash -c "argocd app create" ec2-user
+# sudo su -s /bin/bash -c "kubectl apply -f infra/minikube-app.yaml -n argocd" ec2-user
