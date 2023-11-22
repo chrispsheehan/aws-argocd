@@ -76,17 +76,6 @@ resource "aws_security_group" "ec2-sq" {
   }
 }
 
-resource "aws_ebs_volume" "volume" {
-  availability_zone = data.aws_availability_zones.azs.names[0]
-  size              = 50
-}
-
-resource "aws_volume_attachment" "ebs_att" {
-  device_name = "/dev/sdh"
-  volume_id   = aws_ebs_volume.volume.id
-  instance_id = aws_instance.server.id
-}
-
 # get logs via cat /var/log/cloud-init-output.log
 resource "aws_instance" "server" {
   ami                    = data.aws_ami.amazonlinux2.id
@@ -95,6 +84,14 @@ resource "aws_instance" "server" {
   availability_zone      = data.aws_availability_zones.azs.names[0]
   subnet_id              = aws_subnet.subnet.id
   vpc_security_group_ids = [aws_security_group.ec2-sq.id]
+
+  root_block_device {
+    delete_on_termination = true
+    encrypted             = false
+    iops                  = 3000
+    throughput            = 125
+    volume_size           = 32
+  }
 
   user_data = file("${path.module}/bin/startup.sh")
 }
