@@ -76,6 +76,17 @@ resource "aws_security_group" "ec2-sq" {
   }
 }
 
+resource "aws_ebs_volume" "volume" {
+  availability_zone = data.aws_availability_zones.azs.names[0]
+  size              = 50
+}
+
+resource "aws_volume_attachment" "ebs_att" {
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.volume.id
+  instance_id = aws_instance.server.id
+}
+
 # get logs via cat /var/log/cloud-init-output.log
 resource "aws_instance" "server" {
   ami                    = data.aws_ami.amazonlinux2.id
