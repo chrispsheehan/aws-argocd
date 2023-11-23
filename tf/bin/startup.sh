@@ -34,7 +34,7 @@ rm argocd-linux-amd64
 echo creating argocd server
 sudo su -s /bin/bash -c "kubectl create namespace argocd" ec2-user
 sudo su -s /bin/bash -c "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml" ec2-user
-sleep 120 # replace with wait for loop
+sleep 120 # replace with wait for loop https://gist.github.com/chrispsheehan/cc9cca8e918b5e34deeca16ac7c428a6
 
 # expose argocd
 echo exposing argocd
