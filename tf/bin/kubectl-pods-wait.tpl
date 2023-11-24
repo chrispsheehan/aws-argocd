@@ -1,27 +1,33 @@
-#!/bin/bash
-
-POD_TARGET_COUNT=3
-POD_NAMESPACE=nginx
-TIMEOUT_SECONDS=5
-
 counter=1
 pod_count=0
- 
-while [ $counter -le $TIMEOUT_SECONDS ]
-do
-    pod_count=$(kubectl get pods -n $POD_NAMESPACE --field-selector status.phase=Running -o json | jq '.items' | jq length)
-    echo "$pod_count running pods found"
 
-    if [ $pod_count -ge $POD_TARGET_COUNT ]
+pod_namespace=${POD_NAMESPACE}
+pod_target_count=${POD_TARGET_COUNT}
+timeout_seconds=${TIMEOUT_SECONDS}
+
+echo "waiting for running pods.."
+echo "pod_namespace=$pod_namespace"
+echo "pod_target_count=$pod_target_count"
+echo "timeout_seconds=$timeout_seconds"
+ 
+while [ $counter -le $timeout_seconds ]
+do
+    pod_count=$(sudo su -s /bin/bash -c "kubectl get pods -n $pod_namespace --field-selector status.phase=Running -o json | jq '.items' | jq length" ec2-user)
+    echo "$pod_namespace has $pod_count running pods"
+
+    if [ $pod_count -ge $pod_target_count ]
     then
-        echo "target reached"
-        exit 0
+        echo "$pod_namespace pod target reached"
+        break
     else
-        sleep 1
         counter=$((counter + 1))
-        continue
+        if [ $counter -ge $timeout_seconds ]
+        then
+            echo "$timeout_seconds secound timeout exceeded"
+            exit 1
+        else
+            sleep 1
+            continue
+        fi
     fi
 done
-
-echo "$TIMEOUT_SECONDS secound timeout exceeded"
-exit 1
