@@ -51,5 +51,5 @@ sudo su -s /bin/bash -c "argocd login --insecure localhost:8999 --username admin
 # create app
 echo creating app
 sudo su -s /bin/bash -c "kubectl create namespace test" ec2-user
-sudo su -s /bin/bash -c "argocd app create test --server localhost:8999 --dest-namespace argocd --dest-server https://kubernetes.default.svc --repo https://github.com/chrispsheehan/aws-argocd --path k8s --revision main --sync-policy automated" ec2-user
+sudo su -s /bin/bash -c "argocd app create test --server localhost:8999 --dest-namespace test --dest-server https://kubernetes.default.svc --repo https://github.com/chrispsheehan/aws-argocd --path k8s --revision main --sync-policy automated" ec2-user
 sudo su -s /bin/bash -c "argocd app sync test" ec2-user
