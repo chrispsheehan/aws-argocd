@@ -85,3 +85,30 @@ echo creating app
 sudo su -s /bin/bash -c "kubectl create namespace test" ec2-user
 sudo su -s /bin/bash -c "argocd app create test --server localhost:8999 --dest-namespace test --dest-server https://kubernetes.default.svc --repo https://github.com/chrispsheehan/aws-argocd --path k8s --revision main --sync-policy automated" ec2-user
 sudo su -s /bin/bash -c "argocd app sync test" ec2-user
+
+#!/bin/bash
+counter2=1
+pod_count2=0
+
+pod_namespace2=test
+pod_target_count2=3
+timeout_seconds2=120
+
+echo "waiting for running pods.."
+echo "pod_namespace=$pod_namespace2"
+echo "pod_target_count=$pod_target_count2"
+echo "timeout_seconds=$timeout_seconds2"
+ 
+while [ $counter2 -le $timeout_seconds2 ] && [ $pod_count2 -lt $pod_target_count2 ]
+do
+    pod_count2=$(sudo su -s /bin/bash -c "kubectl get pods -n $pod_namespace2 --field-selector status.phase=Running -o json | jq '.items' | jq length" ec2-user)
+    echo "$pod_namespace2 has $pod_count2 running pods"
+    counter2=$((counter + 1))
+    if [ $counter2 -ge $timeout_seconds2 ]
+    then
+        echo "$timeout_seconds2 secound timeout exceeded"
+        exit 1
+    else
+        sleep 1
+    fi
+done
