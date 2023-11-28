@@ -38,27 +38,29 @@ echo creating argocd server
 sudo su -s /bin/bash -c "kubectl create namespace argocd" ec2-user
 sudo su -s /bin/bash -c "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml" ec2-user
 
-#!/bin/bash
-counter=1
-pod_count=0
+# required wait to prevent issues downstream in script
+sleep 30
 
-pod_namespace=argocd
-pod_target_count=7
-timeout_seconds=120
+#!/bin/bash
+argocd_counter=1
+argocd_pod_count=0
+argocd_pod_namespace=argocd
+argocd_pod_target_count=7
+argocd_timeout_seconds=120
 
 echo "waiting for running pods.."
-echo "pod_namespace=$pod_namespace"
-echo "pod_target_count=$pod_target_count"
-echo "timeout_seconds=$timeout_seconds"
- 
-while [ $counter -le $timeout_seconds ] && [ $pod_count -lt $pod_target_count ]
+echo "argocd_pod_namespace=$argocd_pod_namespace"
+echo "argocd_pod_target_count=$argocd_pod_target_count"
+echo "argocd_timeout_seconds=$argocd_timeout_seconds"
+
+while [ $argocd_counter -le $argocd_timeout_seconds ] && [ $argocd_pod_count -lt $argocd_pod_target_count ]
 do
-    pod_count=$(sudo su -s /bin/bash -c "kubectl get pods -n $pod_namespace --field-selector status.phase=Running -o json | jq '.items' | jq length" ec2-user)
-    echo "$pod_namespace has $pod_count running pods"
-    counter=$((counter + 1))
-    if [ $counter -ge $timeout_seconds ]
+    argocd_pod_count=$(sudo su -s /bin/bash -c "kubectl get pods -n $argocd_pod_namespace --field-selector status.phase=Running -o json | jq '.items' | jq length" ec2-user)
+    echo "$argocd_pod_namespace has $argocd_pod_count running pods"
+    ((argocd_counter++))
+    if [ $argocd_counter -ge $argocd_timeout_seconds ]
     then
-        echo "$timeout_seconds secound timeout exceeded"
+        echo "$argocd_timeout_seconds secound timeout exceeded"
         exit 1
     else
         sleep 1
@@ -87,26 +89,25 @@ sudo su -s /bin/bash -c "argocd app create test --server localhost:8999 --dest-n
 sudo su -s /bin/bash -c "argocd app sync test" ec2-user
 
 #!/bin/bash
-counter2=1
-pod_count2=0
-
-pod_namespace2=test
-pod_target_count2=3
-timeout_seconds2=120
+counter=1
+pod_count=0
+pod_namespace=test
+pod_target_count=3
+timeout_seconds=120
 
 echo "waiting for running pods.."
-echo "pod_namespace=$pod_namespace2"
-echo "pod_target_count=$pod_target_count2"
-echo "timeout_seconds=$timeout_seconds2"
+echo "pod_namespace=$pod_namespace"
+echo "pod_target_count=$pod_target_count"
+echo "timeout_seconds=$timeout_seconds"
  
-while [ $counter2 -le $timeout_seconds2 ] && [ $pod_count2 -lt $pod_target_count2 ]
+while [ $counter -le $timeout_seconds ] && [ $pod_count -lt $pod_target_count ]
 do
-    pod_count2=$(sudo su -s /bin/bash -c "kubectl get pods -n $pod_namespace2 --field-selector status.phase=Running -o json | jq '.items' | jq length" ec2-user)
-    echo "$pod_namespace2 has $pod_count2 running pods"
-    counter2=$((counter + 1))
-    if [ $counter2 -ge $timeout_seconds2 ]
+    pod_count=$(sudo su -s /bin/bash -c "kubectl get pods -n $pod_namespace --field-selector status.phase=Running -o json | jq '.items' | jq length" ec2-user)
+    echo "$pod_namespace has $pod_count running pods"
+    ((counter++))
+    if [ $counter -ge $timeout_seconds ]
     then
-        echo "$timeout_seconds2 secound timeout exceeded"
+        echo "$timeout_seconds secound timeout exceeded"
         exit 1
     else
         sleep 1
