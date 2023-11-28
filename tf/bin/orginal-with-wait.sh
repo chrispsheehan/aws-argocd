@@ -5,8 +5,8 @@ sudo yum update -y
 sudo yum search docker
 sudo yum info docker
 sudo yum install docker -y
-sudo usermod -a -G docker ec2-user
-id ec2-user
+sudo usermod -a -G docker $USER
+id $USER
 newgrp docker
 sudo systemctl enable docker.service
 sudo systemctl start docker.service
@@ -23,7 +23,7 @@ sudo -i
 curl -L https://github.com/kubernetes-sigs/cri-tools/releases/download/v1.28.0/crictl-v1.28.0-linux-amd64.tar.gz --output crictl-linux-amd64.tar.gz
 sudo tar zxvf crictl-linux-amd64.tar.gz -C /usr/local/bin
 rm -f crictl-linux-amd64.tar.gz
-sudo su -s /bin/bash -c 'minikube start' ec2-user
+sudo su -s /bin/bash -c 'minikube start' $USER
 
 #!/bin/bash
 # install argocd cli
@@ -35,8 +35,8 @@ rm argocd-linux-amd64
 #!/bin/bash
 # create argocd server
 echo creating argocd server
-sudo su -s /bin/bash -c "kubectl create namespace argocd" ec2-user
-sudo su -s /bin/bash -c "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml" ec2-user
+sudo su -s /bin/bash -c "kubectl create namespace argocd" $USER
+sudo su -s /bin/bash -c "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml" $USER
 
 # required wait to prevent issues downstream in script
 sleep 30
@@ -55,7 +55,7 @@ echo "argocd_timeout_seconds=$argocd_timeout_seconds"
 
 while [ $argocd_counter -le $argocd_timeout_seconds ] && [ $argocd_pod_count -lt $argocd_pod_target_count ]
 do
-    argocd_pod_count=$(sudo su -s /bin/bash -c "kubectl get pods -n $argocd_pod_namespace --field-selector status.phase=Running -o json | jq '.items' | jq length" ec2-user)
+    argocd_pod_count=$(sudo su -s /bin/bash -c "kubectl get pods -n $argocd_pod_namespace --field-selector status.phase=Running -o json | jq '.items' | jq length" $USER)
     echo "$argocd_pod_namespace has $argocd_pod_count running pods"
     ((argocd_counter++))
     if [ $argocd_counter -ge $argocd_timeout_seconds ]
@@ -70,23 +70,23 @@ done
 #!/bin/bash
 # expose argocd
 echo exposing argocd
-sudo su -s /bin/bash -c "kubectl patch svc argocd-server -n argocd -p '{\"spec\": {\"type\": \"LoadBalancer\"}}'" ec2-user
-sudo su -s /bin/bash -c "kubectl port-forward svc/argocd-server -n argocd 8999:443 &" ec2-user
+sudo su -s /bin/bash -c "kubectl patch svc argocd-server -n argocd -p '{\"spec\": {\"type\": \"LoadBalancer\"}}'" $USER
+sudo su -s /bin/bash -c "kubectl port-forward svc/argocd-server -n argocd 8999:443 &" $USER
 
 #!/bin/bash
 # set admin secret
 echo getting admin secret
-export ADMIN_SECRET=$(sudo su -s /bin/bash -c "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d; echo" ec2-user)
-sudo su -s /bin/bash -c "echo secret:$ADMIN_SECRET" ec2-user
+export ADMIN_SECRET=$(sudo su -s /bin/bash -c "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d; echo" $USER)
+sudo su -s /bin/bash -c "echo secret:$ADMIN_SECRET" $USER
 echo logging in
-sudo su -s /bin/bash -c "argocd login --insecure localhost:8999 --username admin --password $ADMIN_SECRET" ec2-user
+sudo su -s /bin/bash -c "argocd login --insecure localhost:8999 --username admin --password $ADMIN_SECRET" $USER
 
 #!/bin/bash
 # create app
 echo creating app
-sudo su -s /bin/bash -c "kubectl create namespace test" ec2-user
-sudo su -s /bin/bash -c "argocd app create test --server localhost:8999 --dest-namespace test --dest-server https://kubernetes.default.svc --repo https://github.com/chrispsheehan/aws-argocd --path k8s --revision main --sync-policy automated" ec2-user
-sudo su -s /bin/bash -c "argocd app sync test" ec2-user
+sudo su -s /bin/bash -c "kubectl create namespace test" $USER
+sudo su -s /bin/bash -c "argocd app create test --server localhost:8999 --dest-namespace test --dest-server https://kubernetes.default.svc --repo https://github.com/chrispsheehan/aws-argocd --path k8s --revision main --sync-policy automated" $USER
+sudo su -s /bin/bash -c "argocd app sync test" $USER
 
 #!/bin/bash
 counter=1
@@ -102,7 +102,7 @@ echo "timeout_seconds=$timeout_seconds"
  
 while [ $counter -le $timeout_seconds ] && [ $pod_count -lt $pod_target_count ]
 do
-    pod_count=$(sudo su -s /bin/bash -c "kubectl get pods -n $pod_namespace --field-selector status.phase=Running -o json | jq '.items' | jq length" ec2-user)
+    pod_count=$(sudo su -s /bin/bash -c "kubectl get pods -n $pod_namespace --field-selector status.phase=Running -o json | jq '.items' | jq length" $USER)
     echo "$pod_namespace has $pod_count running pods"
     ((counter++))
     if [ $counter -ge $timeout_seconds ]
