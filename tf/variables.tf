@@ -11,6 +11,6 @@ variable "custom_vpc" {
 
 variable "instance_type" {
   description = "Type of ec2 instance - must contain at least two CPU cores"
-  type = string
-  default =  "t2.medium"
+  type        = string
+  default     = "t2.medium"
 }
