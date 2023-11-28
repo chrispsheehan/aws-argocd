@@ -76,28 +76,36 @@ resource "aws_security_group" "ec2-sq" {
   }
 }
 
+data "template_file" "kubectl-wait-argocd" {
+  template = file("${path.module}/bin/kubectl-pods-wait.tpl")
+
+  vars = {
+    POD_NAMESPACE="argocd"
+    POD_TARGET_COUNT=7
+    TIMEOUT_SECONDS=120
+  }
+}
+
+data "template_file" "kubectl-wait-app" {
+  template = file("${path.module}/bin/kubectl-pods-wait.tpl")
+
+  vars = {
+    POD_NAMESPACE="test"
+    POD_TARGET_COUNT=3
+    TIMEOUT_SECONDS=120
+  }
+}
+
 data "template_file" "install-deps" {
   template = file("${path.module}/bin/install-deps.tpl")
 }
 
 data "template_file" "argocd-server" {
   template = file("${path.module}/bin/argocd-server.tpl")
-
-  # vars = {
-  #   argocd_pod_namespace = "argocd"
-  #   pod_target_count     = 7
-  #   timeout_seconds      = 120
-  # }
 }
 
 data "template_file" "argocd-app" {
   template = file("${path.module}/bin/argocd-app.tpl")
-
-  # vars = {
-  #   argocd_pod_namespace = "test"
-  #   pod_target_count     = 3
-  #   timeout_seconds      = 120
-  # }
 }
 
 # get logs via cat /var/log/cloud-init-output.log
@@ -120,8 +128,8 @@ resource "aws_instance" "server" {
   user_data = <<-EOF
     ${data.template_file.install-deps.rendered}
     ${data.template_file.argocd-server.rendered}
+    ${data.template_file.kubectl-wait-argocd.rendered}
     ${data.template_file.argocd-app.rendered}
+    ${data.template_file.kubectl-wait-app.rendered}
   EOF
-
-  # user_data = file("${path.module}/bin/orginal-with-wait.sh")
 }
