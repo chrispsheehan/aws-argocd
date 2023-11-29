@@ -16,3 +16,49 @@ data "aws_ami" "amazonlinux2" {
 data "aws_availability_zones" "azs" {
   state = "available"
 }
+
+data "template_file" "kubectl-wait-app" {
+  template = file("${path.module}/bin/kubectl-pods-wait.tpl")
+
+  vars = {
+    EC2_USER=local.ec2_user
+    POD_NAMESPACE="test"
+    POD_TARGET_COUNT=3
+    TIMEOUT_SECONDS=120
+  }
+}
+
+data "template_file" "kubectl-wait-argocd" {
+  template = file("${path.module}/bin/kubectl-pods-wait.tpl")
+
+  vars = {
+    EC2_USER=local.ec2_user
+    POD_NAMESPACE="argocd"
+    POD_TARGET_COUNT=7
+    TIMEOUT_SECONDS=120
+  }
+}
+
+data "template_file" "install-deps" {
+  template = file("${path.module}/bin/install-deps.tpl")
+
+  vars = {
+    EC2_USER=local.ec2_user
+  }
+}
+
+data "template_file" "argocd-server" {
+  template = file("${path.module}/bin/argocd-server.tpl")
+
+  vars = {
+    EC2_USER=local.ec2_user
+  }
+}
+
+data "template_file" "argocd-app" {
+  template = file("${path.module}/bin/argocd-app.tpl")
+
+  vars = {
+    EC2_USER=local.ec2_user
+  }
+}

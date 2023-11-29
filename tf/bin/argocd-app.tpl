@@ -1,6 +1,7 @@
 #!/bin/bash
-export ec2_user=ec2-user
+export ec2_user=${EC2_USER}
 
+#!/bin/bash
 # expose argocd
 echo exposing argocd
 sudo su -s /bin/bash -c "kubectl patch svc argocd-server -n argocd -p '{\"spec\": {\"type\": \"LoadBalancer\"}}'" $ec2_user

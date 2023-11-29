@@ -1,6 +1,7 @@
 #!/bin/bash
-export ec2_user=ec2-user
+export ec2_user=${EC2_USER}
 
+#!/bin/bash
 # install docker service
 echo installing docker
 sudo yum update -y

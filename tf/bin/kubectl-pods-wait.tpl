@@ -1,6 +1,7 @@
 #!/bin/bash
-export ec2_user=ec2-user
+export ec2_user=${EC2_USER}
 
+#!/bin/bash
 counter=1
 pod_count=0
 pod_namespace=${POD_NAMESPACE}

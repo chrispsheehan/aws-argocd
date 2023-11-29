@@ -76,38 +76,6 @@ resource "aws_security_group" "ec2-sq" {
   }
 }
 
-data "template_file" "kubectl-wait-argocd" {
-  template = file("${path.module}/bin/kubectl-pods-wait.tpl")
-
-  vars = {
-    POD_NAMESPACE="argocd"
-    POD_TARGET_COUNT=7
-    TIMEOUT_SECONDS=120
-  }
-}
-
-data "template_file" "kubectl-wait-app" {
-  template = file("${path.module}/bin/kubectl-pods-wait.tpl")
-
-  vars = {
-    POD_NAMESPACE="test"
-    POD_TARGET_COUNT=3
-    TIMEOUT_SECONDS=120
-  }
-}
-
-data "template_file" "install-deps" {
-  template = file("${path.module}/bin/install-deps.tpl")
-}
-
-data "template_file" "argocd-server" {
-  template = file("${path.module}/bin/argocd-server.tpl")
-}
-
-data "template_file" "argocd-app" {
-  template = file("${path.module}/bin/argocd-app.tpl")
-}
-
 # get logs via cat /var/log/cloud-init-output.log
 resource "aws_instance" "server" {
   ami                    = data.aws_ami.amazonlinux2.id
