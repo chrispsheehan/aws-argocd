@@ -1,5 +1,5 @@
 #!/bin/bash
-export ec2_user=${EC2_USER}
+ec2_user=${EC2_USER}
 
 #!/bin/bash
 # install docker service
