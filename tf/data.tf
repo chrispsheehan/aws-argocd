@@ -61,6 +61,12 @@ data "template_file" "argocd-app" {
 
   vars = {
     EC2_USER    = local.ec2_user
-    ARGOCD_REPO = local.target_argo_repo
+    ARGOCD_REPO = local.target_argocd_repo
+    ARGOCD_REPO_BRANCH = local.target_argocd_repo_branch
+    ARGOCD_SERVER_PORT = local.argocd_server_port
+    ARGOCD_APP_NAME = local.argocd_app_name
+    ARGOCD_APP_NAMESPACE = local.argocd_app_namespace
+    ARGOCD_APP_PORT = local.argocd_app_port
+    ARGOCD_SVC_NAME = local.argocd_svc_name
   }
 }
