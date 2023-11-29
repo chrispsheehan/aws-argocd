@@ -7,5 +7,5 @@ locals {
   argocd_app_name           = "test-app"
   argocd_app_namespace      = "test"
   argocd_app_port           = 9376         # must match k8s/nginx-service.yaml
-  argocd_svc_name           = "my-service" # must match k8s/nginx-service.yaml
+  argocd_app_svc_name       = "my-service" # must match k8s/nginx-service.yaml
 }

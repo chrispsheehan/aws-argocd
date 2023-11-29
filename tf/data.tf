@@ -60,13 +60,28 @@ data "template_file" "argocd-app" {
   template = file("${path.module}/bin/argocd-app.tpl")
 
   vars = {
-    EC2_USER    = local.ec2_user
-    ARGOCD_REPO = local.target_argocd_repo
-    ARGOCD_REPO_BRANCH = local.target_argocd_repo_branch
-    ARGOCD_SERVER_PORT = local.argocd_server_port
-    ARGOCD_APP_NAME = local.argocd_app_name
+    EC2_USER             = local.ec2_user
+    ARGOCD_REPO          = local.target_argocd_repo
+    ARGOCD_REPO_BRANCH   = local.target_argocd_repo_branch
+    ARGOCD_SERVER_PORT   = local.argocd_server_port
+    ARGOCD_APP_NAME      = local.argocd_app_name
     ARGOCD_APP_NAMESPACE = local.argocd_app_namespace
-    ARGOCD_APP_PORT = local.argocd_app_port
-    ARGOCD_SVC_NAME = local.argocd_svc_name
+    ARGOCD_APP_PORT      = local.argocd_app_port
   }
 }
+
+data "template_file" "argocd-app-expose" {
+  template = file("${path.module}/bin/argocd-app-expose.tpl")
+
+  vars = {
+    EC2_USER             = local.ec2_user
+    ARGOCD_REPO          = local.target_argocd_repo
+    ARGOCD_REPO_BRANCH   = local.target_argocd_repo_branch
+    ARGOCD_SERVER_PORT   = local.argocd_server_port
+    ARGOCD_APP_NAME      = local.argocd_app_name
+    ARGOCD_APP_NAMESPACE = local.argocd_app_namespace
+    ARGOCD_APP_PORT      = local.argocd_app_port
+    ARGOCD_APP_SVC_NAME  = local.argocd_app_svc_name
+  }
+}
+

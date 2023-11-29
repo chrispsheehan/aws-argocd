@@ -6,7 +6,6 @@ argocd_server_port=${ARGOCD_SERVER_PORT}
 argocd_app_name=${ARGOCD_APP_NAME}
 argocd_app_namespace=${ARGOCD_APP_NAMESPACE}
 argocd_app_port=${ARGOCD_APP_PORT}
-argocd_svc_name=${ARGOCD_SVC_NAME}
 
 #!/bin/bash
 # expose argocd
@@ -28,4 +27,3 @@ echo creating app
 sudo su -s /bin/bash -c "kubectl create namespace $argocd_app_namespace" $ec2_user
 sudo su -s /bin/bash -c "argocd app create $argocd_app_name --server localhost:$argocd_server_port --dest-namespace $argocd_app_namespace --dest-server https://kubernetes.default.svc --repo $argocd_repo --path k8s --revision $argocd_repo_branch --sync-policy automated" $ec2_user
 sudo su -s /bin/bash -c "argocd app sync $argocd_app_name" $ec2_user
-sudo su -s /bin/bash -c "kubectl port-forward svc/$argocd_svc_name -n $argocd_app_namespace $argocd_app_port:$argocd_app_port &" $ec2_user

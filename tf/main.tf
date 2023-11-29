@@ -99,5 +99,6 @@ resource "aws_instance" "server" {
     ${data.template_file.kubectl-wait-argocd.rendered}
     ${data.template_file.argocd-app.rendered}
     ${data.template_file.kubectl-wait-app.rendered}
+    ${data.template_file.argocd-app-expose.rendered}
   EOF
 }
