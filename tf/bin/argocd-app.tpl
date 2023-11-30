@@ -14,11 +14,9 @@ sudo su -s /bin/bash -c "kubectl patch svc argocd-server -n argocd -p '{\"spec\"
 sudo su -s /bin/bash -c "kubectl port-forward svc/argocd-server -n argocd $argocd_server_port:443 &" $ec2_user
 
 #!/bin/bash
-# set admin secret
-echo getting admin secret
-ADMIN_SECRET=$(sudo su -s /bin/bash -c "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d; echo" $ec2_user)
-sudo su -s /bin/bash -c "echo secret:$ADMIN_SECRET" $ec2_user
+# log into argocd
 echo logging in
+ADMIN_SECRET=$(sudo su -s /bin/bash -c "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d; echo" $ec2_user)
 sudo su -s /bin/bash -c "argocd login --insecure localhost:$argocd_server_port --username admin --password $ADMIN_SECRET" $ec2_user
 
 #!/bin/bash
