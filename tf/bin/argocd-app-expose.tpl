@@ -6,4 +6,4 @@ argocd_app_svc_name=${ARGOCD_APP_SVC_NAME}
 
 #!/bin/bash
 # expose app
-sudo su -s /bin/bash -c "kubectl port-forward svc/$argocd_app_svc_name -n $argocd_app_namespace $argocd_app_port:$argocd_app_port &" $ec2_user
+sudo su -s /bin/bash -c "kubectl port-forward svc/$argocd_app_svc_name --address 0.0.0.0 -n $argocd_app_namespace $argocd_app_port:$argocd_app_port &" $ec2_user

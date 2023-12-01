@@ -11,7 +11,7 @@ argocd_app_port=${ARGOCD_APP_PORT}
 # expose argocd
 echo exposing argocd
 sudo su -s /bin/bash -c "kubectl patch svc argocd-server -n argocd -p '{\"spec\": {\"type\": \"LoadBalancer\"}}'" $ec2_user
-sudo su -s /bin/bash -c "kubectl port-forward svc/argocd-server -n argocd $argocd_server_port:443 &" $ec2_user
+sudo su -s /bin/bash -c "kubectl port-forward svc/argocd-server --address 0.0.0.0 -n argocd $argocd_server_port:443 &" $ec2_user
 
 #!/bin/bash
 # log into argocd
