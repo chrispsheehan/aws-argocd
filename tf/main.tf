@@ -60,13 +60,21 @@ resource "aws_security_group" "ec2-sq" {
   ]
 
   ingress {
-    description = "HTTP"
-    from_port   = 80
-    to_port     = 80
+    description = "HTTP ${local.argocd_server_port}"
+    from_port   = local.argocd_server_port
+    to_port     = local.argocd_server_port 
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    # cidr_blocks = [aws_vpc.vpc.cidr_block]
   }
+
+  ingress {
+    description = "HTTP ${local.argocd_app_port}"
+    from_port   = local.argocd_app_port
+    to_port     = local.argocd_app_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   ingress {
     description = "SSH"
     from_port   = 22
