@@ -12,6 +12,7 @@ What problem(s) are we looking to solve?
 - Associate credentials as per [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
 ```sh
+cd tf
 terraform init
 terraform plan
 terraform apply
