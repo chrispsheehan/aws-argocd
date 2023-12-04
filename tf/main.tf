@@ -73,7 +73,7 @@ resource "aws_security_group" "ec2-sq" {
       from_port   = ingress.value
       to_port     = ingress.value
       protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = ["${local.ifconfig_co_json.ip}/32"]
     }
   }
 }
