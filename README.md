@@ -6,7 +6,6 @@ What problem(s) are we looking to solve?
 
 This repo leverages terraform, argoCD and EC2 in creating ephemeral environments.
 
-
 ## prerequisite
 
 - Create AWS account [here](https://aws.amazon.com/resources/create-account/)
@@ -16,7 +15,9 @@ This repo leverages terraform, argoCD and EC2 in creating ephemeral environments
 ## deploy aws infrastructure
 
 - run `just deploy`
+  - note it will take a few minutes to spin up!
 - access app via `app-url` output value.
+- once finished ensure you run `just destroy`
 
 ## log into argocd
 
@@ -37,6 +38,7 @@ slZ9tG0Sp2O8fjbH
 ```
 - username is `admin`
 - access argocd UI via `argocd-url` output value.
+  - note you may be (initially) blocked and have to bypass in the browser
 
 ## references
 
