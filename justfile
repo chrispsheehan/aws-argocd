@@ -1,4 +1,11 @@
-apply:
+destroy:
+    #!/usr/bin/env bash
+    cd tf
+    terraform destroy
+    cd ..
+
+
+deploy:
     #!/usr/bin/env bash
     cd tf
     terraform init
