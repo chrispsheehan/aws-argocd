@@ -1,9 +1,20 @@
+init:
+    #!/usr/bin/env bash
+    cd tf
+    terraform init
+    cd ..
+
+plan:
+    #!/usr/bin/env bash
+    cd tf
+    terraform plan
+    cd ..
+
 destroy:
     #!/usr/bin/env bash
     cd tf
     terraform destroy
     cd ..
-
 
 deploy:
     #!/usr/bin/env bash
