@@ -6,11 +6,11 @@ What problem(s) are we looking to solve?
 
 This repo leverages terraform, argoCD and EC2 in creating ephemeral environments.
 
-## prerequisite
+## prerequisites
 
-- Create AWS account [here](https://aws.amazon.com/resources/create-account/)
-- Associate credentials as per [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- Run one time terraform setup with `just init`
+- create AWS account [here](https://aws.amazon.com/resources/create-account/)
+- associate credentials as per [here](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+- run one time terraform setup with `just init`
 
 ## deploy aws infrastructure
 
